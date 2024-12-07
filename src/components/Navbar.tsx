@@ -1,65 +1,51 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("youtube");
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const tabs = [
+    { id: "youtube", name: "YouTube", href: "/downloader/youtube" },
+    { id: "tiktok", name: "TikTok", href: "/downloader/tiktok" },
+    { id: "instagram", name: "Instagram", href: "/downloader/instagram" },
+    { id: "facebook", name: "Facebook", href: "/downloader/facebook" },
+    { id: "twitter", name: "Twitter", href: "/downloader/twitter" },
+  ];
 
   return (
-    <nav className="bg-gradient-to-r from-blue-900 to-black shadow-md">
+    <nav className="bg-white dark:bg-gray-900 shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
-        <div className="text-2xl font-bold text-white">
+        <div className="text-2xl font-bold text-gray-900 dark:text-white">
           <Link href="/">Link2Vid</Link>
         </div>
 
-        {/* Hamburger Icon for Mobile */}
-        <div className="md:hidden">
-          <button onClick={toggleMenu} aria-label="Toggle menu">
-            {isOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
-          </button>
+        {/* Tabs */}
+        <div className="flex space-x-4">
+          {tabs.map((tab) => (
+            <Link key={tab.id} href={tab.href}>
+              <motion.div
+                className={`px-3 py-2 rounded-lg cursor-pointer ${
+                  activeTab === tab.id
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-900 dark:text-white"
+                }`}
+                onClick={() => setActiveTab(tab.id)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {tab.name}
+              </motion.div>
+            </Link>
+          ))}
         </div>
 
-        {/* Menu Items */}
-        <div className={`md:flex items-center ${isOpen ? "block" : "hidden"}`}>
-          <ul className="flex flex-col md:flex-row md:space-x-6">
-            <li className="relative group">
-              <button className="flex items-center space-x-1 text-white">
-                <span>Downloader</span>
-                <motion.div
-                  initial={{ rotate: 0 }}
-                  animate={{ rotate: isOpen ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  ▼
-                </motion.div>
-              </button>
-              <ul className="absolute left-0 mt-2 w-40 bg-white shadow-lg rounded-md hidden group-hover:block">
-                <li>
-                  <Link href="/downloader/youtube" className="block px-4 py-2 hover:bg-gray-100">
-                    YouTube
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/downloader/tiktok" className="block px-4 py-2 hover:bg-gray-100">
-                    TikTok
-                  </Link>
-                </li>
-              </ul>
-            </li>
-          </ul>
-
-          {/* Dark Mode Toggle */}
-          <div className="mt-4 md:mt-0 md:ml-4">
-            <ThemeToggle />
-          </div>
-        </div>
+        {/* Dark Mode Toggle */}
+        <ThemeToggle />
       </div>
     </nav>
   );
