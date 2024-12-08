@@ -24,7 +24,7 @@ export default function Navbar() {
   }, [pathname]);
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-md">
+    <nav className="bg-white dark:bg-slate-900 shadow-md relative">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
         <div className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -38,9 +38,9 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Tabs */}
-        <div className={`md:flex items-center ${menuOpen ? "block" : "hidden"} transition-all duration-300 ease-in-out`}>
-          <ul className="flex flex-col md:flex-row md:space-x-6">
+        {/* Tabs for Desktop */}
+        <div className="hidden md:flex items-center">
+          <ul className="flex space-x-6">
             {tabs.map((tab) => (
               <li key={tab.id} className="relative">
                 <Link href={tab.href}>
@@ -63,11 +63,46 @@ export default function Navbar() {
           </ul>
 
           {/* Dark Mode Toggle */}
-          <div className="mt-4 md:mt-0 md:ml-4">
+          <div className="ml-4">
             <ThemeToggle />
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {menuOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-10 flex justify-center items-center md:hidden">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg relative">
+            {/* Close Button */}
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="absolute top-2 right-2 text-gray-900 dark:text-white"
+              aria-label="Close menu"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <ul className="flex flex-col space-y-4">
+              {tabs.map((tab) => (
+                <li key={tab.id}>
+                  <Link href={tab.href}>
+                    <motion.div
+                      className={`px-3 py-2 cursor-pointer text-gray-900 dark:text-white hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-300`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {tab.name}
+                    </motion.div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4">
+              <ThemeToggle />
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 } 
