@@ -1,5 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import TikTokScraper from 'tiktok-scraper';
+import youtubedl from 'youtube-dl-exec';
+
+type VideoFormat = {
+  format_id: string;
+  format_note: string;
+  filesize: number;
+  url: string;
+  acodec: string;
+  audio_ext: string;
+};
+
+type TikTokDLResponse = {
+  title: string;
+  thumbnail: string;
+  duration: number;
+  formats: VideoFormat[];
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -10,12 +26,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      const videoMeta = await TikTokScraper.getVideoMeta(url);
+      const info = await youtubedl(url, {
+        dumpSingleJson: true,
+        noWarnings: true,
+        noCheckCertificates: true,
+        preferFreeFormats: true,
+        youtubeSkipDashManifest: true,
+      }) as TikTokDLResponse;
+
       const videoDetails = {
-        title: videoMeta.collector[0].text,
-        thumbnail: videoMeta.collector[0].imageUrl,
-        duration: videoMeta.collector[0].videoMeta.duration,
-        downloadUrl: videoMeta.collector[0].videoUrl,
+        title: info.title,
+        thumbnail: info.thumbnail,
+        duration: info.duration.toString(),
+        formats: info.formats
+          .filter((format) => format.url && format.filesize)
+          .map((format) => ({
+            format_id: format.format_id,
+            format_note: format.format_note,
+            filesize: format.filesize,
+            url: format.url,
+            acodec: format.acodec,
+            audio_ext: format.audio_ext
+          }))
       };
 
       res.status(200).json(videoDetails);
