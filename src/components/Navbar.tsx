@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
-  const [activeTab, setActiveTab] = useState("youtube");
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname() || "";
 
   const tabs = [
     { id: "youtube", name: "YouTube", href: "/downloader/youtube" },
@@ -17,6 +18,10 @@ export default function Navbar() {
     { id: "facebook", name: "Facebook", href: "/downloader/facebook" },
     { id: "twitter", name: "Twitter", href: "/downloader/twitter" },
   ];
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-md">
@@ -34,27 +39,25 @@ export default function Navbar() {
         </div>
 
         {/* Tabs */}
-        <div className={`md:flex items-center ${menuOpen ? "block" : "hidden"}`}>
+        <div className={`md:flex items-center ${menuOpen ? "block" : "hidden"} transition-all duration-300 ease-in-out`}>
           <ul className="flex flex-col md:flex-row md:space-x-6">
             {tabs.map((tab) => (
-              <li key={tab.id}>
+              <li key={tab.id} className="relative">
                 <Link href={tab.href}>
                   <motion.div
-                    className={`px-3 py-2 rounded-lg cursor-pointer ${
-                      activeTab === tab.id
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-900 dark:text-white"
-                    }`}
-                    onClick={() => {
-                      setActiveTab(tab.id);
-                      setMenuOpen(false);
-                    }}
+                    className={`px-3 py-2 cursor-pointer text-gray-900 dark:text-white hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-300`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     {tab.name}
                   </motion.div>
                 </Link>
+                {pathname.includes(tab.id) && (
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500"
+                    layoutId="underline"
+                  />
+                )}
               </li>
             ))}
           </ul>
