@@ -62,6 +62,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 function isValidTikTokUrl(url: string): boolean {
-  const regex = /^(https?\:\/\/)?(www\.tiktok\.com)\/.+$/;
+  const regex = /^(https?\:\/\/)?(www\.tiktok\.com|vm\.tiktok\.com)\/.+$/;
   return regex.test(url);
-} 
+}
