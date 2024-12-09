@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { PlatformCard } from "@/components/platform-card";
-import { ArrowDown, Download, Shield, Zap, ArrowRight } from "lucide-react";
+import { ArrowDown, Download, Shield, Zap, ArrowRight, Globe } from "lucide-react";
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import { Timeline } from "@/components/ui/timeline";
 import Image from "next/image";
@@ -62,6 +62,11 @@ const features = [
     icon: <Download className="w-8 h-8" />,
     title: "Multiple Formats",
     description: "Choose from various quality options and formats",
+  },
+  {
+    icon: <Globe className="w-8 h-8" />,
+    title: "Cross-Platform Compatibility",
+    description: "Our platform works seamlessly on all operating systems",
   },
 ];
 
@@ -258,7 +263,7 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             Why Choose Link2Vid?
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
