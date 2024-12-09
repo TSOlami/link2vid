@@ -35,7 +35,7 @@ export default function TikTokDownloader() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/download/tiktok', {
+      const response = await fetch('/api/tiktok-download', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export default function TikTokDownloader() {
   };
 
   const isValidTikTokUrl = (url: string) => {
-    const regex = /^(https?\:\/\/)?(www\.tiktok\.com)\/.+$/;
+    const regex = /^(https?\:\/\/)?(www\.tiktok\.com|vm\.tiktok\.com)\/.+$/;
     return regex.test(url);
   };
 
