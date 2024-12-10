@@ -6,19 +6,35 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 type VideoDetails = {
-  title: string;
-  thumbnail: string;
-  duration: number;
-  downloadUrl: string;
+  status: string;
+  message?: string;
+  result?: {
+    type: string;
+    description?: string;
+    author?: {
+      uid: string;
+      username: string;
+      nickname: string;
+      signature: string;
+      region: string;
+      url: string;
+    };
+    music?: {
+      id: number;
+      title: string;
+      author: string;
+      album: string;
+      playUrl: string[];
+      duration: number;
+    };
+    images?: string[];
+    video?: {
+      playAddr: string[];
+      ratio: string;
+      duration: number;
+    };
+  };
 };
-
-function formatDuration(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return [mins, secs]
-    .map((v) => v < 10 ? `0${v}` : v)
-    .join(":");
-}
 
 export default function TikTokDownloader() {
   const [url, setUrl] = useState("");
@@ -35,7 +51,7 @@ export default function TikTokDownloader() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/tiktok-download', {
+      const response = await fetch('/api/download/tiktok', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,21 +74,6 @@ export default function TikTokDownloader() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleDownload = () => {
-    if (!videoDetails) {
-      setError("No video details available.");
-      return;
-    }
-    setError("");
-
-    const link = document.createElement('a');
-    link.href = videoDetails.downloadUrl;
-    link.download = `${videoDetails.title}.mp4`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   const isValidTikTokUrl = (url: string) => {
@@ -107,22 +108,78 @@ export default function TikTokDownloader() {
             </Button>
           </div>
           {error && <p className="text-red-500">{error}</p>}
-          {videoDetails && (
+          {videoDetails && videoDetails.result && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="mt-4"
+              className="mt-4 space-y-6"
             >
-              <img src={videoDetails.thumbnail} alt="Video Thumbnail" className="w-full mb-2 rounded-lg" />
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{videoDetails.title}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Duration: {formatDuration(videoDetails.duration)}</p>
-              <Button
-                className="mt-4 w-full p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300"
-                onClick={handleDownload}
-              >
-                Download
-              </Button>
+              <div className="border-b pb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Author Details</h3>
+                <div className="mt-2">
+                  <p className="text-sm text-gray-600 dark:text-gray-300"><strong>Nickname:</strong> {videoDetails.result.author?.nickname}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300"><strong>Username:</strong> @{videoDetails.result.author?.username}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300"><strong>Signature:</strong> {videoDetails.result.author?.signature}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300"><strong>Region:</strong> {videoDetails.result.author?.region}</p>
+                  <a href={videoDetails.result.author?.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Visit Profile</a>
+                </div>
+              </div>
+              <div className="border-b pb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Post Description</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{videoDetails.result.description}</p>
+              </div>
+              {videoDetails.result.images && (
+                <div className="border-b pb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Images</h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {videoDetails.result.images.map((image, index) => (
+                      <div key={index} className="mb-4">
+                        <img src={image} alt={`Image ${index + 1}`} className="w-full mb-2 rounded-lg" />
+                        <Button
+                          className="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300"
+                          onClick={() => window.open(image, '_blank')}
+                        >
+                          Download Image
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {videoDetails.result.video && videoDetails.result.video.playAddr && videoDetails.result.video.playAddr.length > 0 && (
+                <div className="border-b pb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Video</h3>
+                  <video controls className="w-full mb-2 rounded-lg">
+                    <source src={videoDetails.result.video.playAddr[0]} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                  <Button
+                    className="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300"
+                    onClick={() => window.open(videoDetails.result?.video?.playAddr[0], '_blank')}
+                  >
+                    Download Video
+                  </Button>
+                </div>
+              )}
+              {videoDetails.result.music && (
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Music Details</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300"><strong>Title:</strong> {videoDetails.result.music.title}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300"><strong>Author:</strong> {videoDetails.result.music.author}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300"><strong>Album:</strong> {videoDetails.result.music.album}</p>
+                  <audio controls className="w-full mb-2">
+                    <source src={videoDetails.result.music.playUrl[0]} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                  <Button
+                    className="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300"
+                    onClick={() => window.open(videoDetails.result?.music?.playUrl[0], '_blank')}
+                  >
+                    Download Music
+                  </Button>
+                </div>
+              )}
             </motion.div>
           )}
         </Card>
