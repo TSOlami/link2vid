@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { PlatformCard } from "@/components/platform-card";
-import { ArrowDown, Download, Shield, Zap, ArrowRight, Globe } from "lucide-react";
+import { ArrowDown, Download, Shield, Zap, ArrowRight, Globe, EyeOff } from "lucide-react";
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import { Timeline } from "@/components/ui/timeline";
 import Image from "next/image";
@@ -67,6 +67,11 @@ const features = [
     icon: <Globe className="w-8 h-8" />,
     title: "Cross-Platform Compatibility",
     description: "Our platform works seamlessly on all operating systems",
+  },
+  {
+    icon: <EyeOff className="w-8 h-8" />,
+    title: "No Watermark",
+    description: "Download videos without any watermarks for a clean look",
   },
 ];
 
