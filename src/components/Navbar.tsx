@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Menu, X } from "lucide-react";
 
@@ -26,16 +26,21 @@ export default function Navbar() {
   return (
     <nav className="bg-white dark:bg-slate-900 shadow-md relative">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        {/* Hamburger Icon for Mobile */}
+        <div className="md:hidden flex items-center">
+          <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
+            {menuOpen ? <X className="h-6 w-6 text-gray-900 dark:text-white" /> : <Menu className="h-6 w-6 text-gray-900 dark:text-white" />}
+          </button>
+        </div>
+
         {/* Logo */}
         <div className="text-2xl font-bold text-gray-900 dark:text-white">
           <Link href="/">Link2Vid</Link>
         </div>
 
-        {/* Hamburger Icon for Mobile */}
+        {/* Dark Mode Toggle for Mobile */}
         <div className="md:hidden">
-          <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
-            {menuOpen ? <X className="h-6 w-6 text-gray-900 dark:text-white" /> : <Menu className="h-6 w-6 text-gray-900 dark:text-white" />}
-          </button>
+          <ThemeToggle />
         </div>
 
         {/* Tabs for Desktop */}
@@ -70,39 +75,46 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu Overlay */}
-      {menuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-10 flex justify-center items-center md:hidden">
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg relative">
-            {/* Close Button */}
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="absolute top-2 right-2 text-gray-900 dark:text-white"
-              aria-label="Close menu"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            <ul className="flex flex-col space-y-4">
-              {tabs.map((tab) => (
-                <li key={tab.id}>
-                  <Link href={tab.href}>
-                    <motion.div
-                      className={`px-3 py-2 cursor-pointer text-gray-900 dark:text-white hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-300`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      {tab.name}
-                    </motion.div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4">
-              <ThemeToggle />
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-10 flex justify-center items-center md:hidden"
+          >
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg relative">
+              {/* Close Button */}
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="absolute top-2 right-2 text-gray-900 dark:text-white"
+                aria-label="Close menu"
+              >
+                <X className="h-6 w-6" />
+              </button>
+              <ul className="flex flex-col space-y-4">
+                {tabs.map((tab) => (
+                  <li key={tab.id}>
+                    <Link href={tab.href}>
+                      <motion.div
+                        className={`px-3 py-2 cursor-pointer text-gray-900 dark:text-white hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-300`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        {tab.name}
+                      </motion.div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4">
+                <ThemeToggle />
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 } 
