@@ -1,21 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import youtubedl from 'youtube-dl-exec';
-
-type VideoFormat = {
-  format_id: string;
-  format_note: string;
-  filesize: number;
-  url: string;
-  acodec: string;
-  audio_ext: string;
-};
-
-type TikTokDLResponse = {
-  title: string;
-  thumbnail: string;
-  duration: number;
-  formats: VideoFormat[];
-};
+import Tiktok from '@tobyg74/tiktok-api-dl';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -26,31 +10,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      const info = await youtubedl(url, {
-        dumpSingleJson: true,
-        noWarnings: true,
-        noCheckCertificates: true,
-        preferFreeFormats: true,
-        youtubeSkipDashManifest: true,
-      }) as TikTokDLResponse;
+      const result = await Tiktok.Downloader(url, {
+        version: "v1" //  version: "v1" | "v2" | "v3"
+      });
 
-      const videoDetails = {
-        title: info.title,
-        thumbnail: info.thumbnail,
-        duration: info.duration.toString(),
-        formats: info.formats
-          .filter((format) => format.url && format.filesize)
-          .map((format) => ({
-            format_id: format.format_id,
-            format_note: format.format_note,
-            filesize: format.filesize,
-            url: format.url,
-            acodec: format.acodec,
-            audio_ext: format.audio_ext
-          }))
-      };
+    console.log("URL: ");
+    console.log(url);
+      console.log("Result: ");
+      console.log(result);
 
-      res.status(200).json(videoDetails);
+      if (!result || result.status !== 'success') {
+        throw new Error(result?.message || 'Failed to fetch video details');
+      }
+
+      if (!result.result) {
+        throw new Error('Result data is missing');
+      }
+
+      res.status(200).json(result);
     } catch (error) {
       console.error('Error fetching video details:', error);
       res.status(500).json({ error: 'Failed to fetch video details' });
