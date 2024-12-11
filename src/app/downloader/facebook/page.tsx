@@ -17,7 +17,7 @@ export default function FacebookDownloader() {
   const [loading, setLoading] = useState(false);
   const [videos, setVideos] = useState<VideoData[]>([]);
 
-  const handleDownloadMedia = async () => {
+  const handleFetchMedia = async () => {
     setError("");
     setLoading(true);
     setVideos([]);
@@ -69,10 +69,10 @@ export default function FacebookDownloader() {
             />
             <Button
               className="mt-3 w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
-              onClick={handleDownloadMedia}
+              onClick={handleFetchMedia}
               disabled={loading}
             >
-              {loading ? 'Downloading...' : 'Download Media'}
+              {loading ? 'Fetching...' : 'Fetch Media'}
             </Button>
           </div>
           {error && <p className="text-red-500">{error}</p>}
