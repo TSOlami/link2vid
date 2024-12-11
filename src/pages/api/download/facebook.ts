@@ -2,8 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { fbdl } from 'ruhend-scraper';
 
 interface VideoData {
-  resolution: string;
-  thumbnail: string;
+  resolution?: string;
+  thumbnail?: string;
   url: string;
 }
 
