@@ -6,10 +6,19 @@ import { ArrowDown, Download, Shield, Zap, ArrowRight, Globe, EyeOff, Infinity }
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import { Timeline } from "@/components/ui/timeline";
 import Image from "next/image";
+import Link from "next/link";
 
 type PlatformId = 'youtube' | 'tiktok' | 'instagram' | 'facebook' | 'twitter';
 
-const platforms: { id: PlatformId; name: string; icon: string; color: string; description: string; }[] = [
+interface Platform {
+  id: PlatformId;
+  name: string;
+  icon: string;
+  color: string;
+  description: string;
+}
+
+const platforms: Platform[] = [
   {
     id: "youtube",
     name: "YouTube",
@@ -249,7 +258,7 @@ export default function Home() {
               className="flex space-x-24 animate-marquee"
               initial={{ x: '100%' }}
               animate={{ x: '-100%' }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 10, ease: "linear" }}
             >
               {platforms.map((platform) => (
                 <div key={platform.id} className="flex-shrink-0 bg-slate-200 dark:bg-slate-800 p-4 rounded-lg shadow-lg">
@@ -350,11 +359,6 @@ export default function Home() {
           </motion.div>
         </motion.div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-8 px-4 bg-slate-100 dark:bg-slate-900 text-center text-slate-950 dark:text-white">
-        <p>&copy; {new Date().getFullYear()} Link2Vid. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
