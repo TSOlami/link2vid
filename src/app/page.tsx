@@ -258,7 +258,7 @@ export default function Home() {
               className="flex space-x-24 animate-marquee"
               initial={{ x: '100%' }}
               animate={{ x: '-100%' }}
-              transition={{ duration: 10, ease: "linear" }}
+              transition={{ duration: 10, ease: "linear", repeat: Infinity }}
             >
               {platforms.map((platform) => (
                 <div key={platform.id} className="flex-shrink-0 bg-slate-200 dark:bg-slate-800 p-4 rounded-lg shadow-lg">
