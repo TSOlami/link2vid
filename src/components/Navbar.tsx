@@ -78,40 +78,53 @@ export default function Navbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 bg-black bg-opacity-50 z-10 flex justify-center items-center md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
           >
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg relative">
-              {/* Close Button */}
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="absolute top-2 right-2 text-gray-900 dark:text-white"
-                aria-label="Close menu"
-              >
-                <X className="h-6 w-6" />
-              </button>
-              <ul className="flex flex-col space-y-4">
-                {tabs.map((tab) => (
-                  <li key={tab.id}>
-                    <Link href={tab.href}>
-                      <motion.div
-                        className={`px-3 py-2 cursor-pointer text-gray-900 dark:text-white hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-300`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        {tab.name}
-                      </motion.div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-4">
-                <ThemeToggle />
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+              className="fixed top-0 left-0 bottom-0 w-[250px] bg-white dark:bg-gray-900 shadow-lg"
+            >
+              <div className="p-5">
+                <div className="flex justify-between items-center mb-8">
+                  <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Link2Vid
+                  </Link>
+                  <button
+                    onClick={() => setMenuOpen(false)}
+                    className="text-gray-900 dark:text-white"
+                    aria-label="Close menu"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+                <ul className="space-y-4">
+                  {tabs.map((tab) => (
+                    <li key={tab.id}>
+                      <Link href={tab.href}>
+                        <motion.div
+                          className={`px-3 py-2 cursor-pointer text-gray-900 dark:text-white hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-300 ${
+                            pathname.includes(tab.id) ? 'text-blue-500 dark:text-blue-400' : ''
+                          }`}
+                          whileHover={{ x: 4 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          {tab.name}
+                        </motion.div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-8">
+                  <ThemeToggle />
+                </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
